@@ -605,7 +605,10 @@ const registerNetworkIpc = (mainWindow) => {
           });
         }
 
-        for (let item of folderRequests) {
+        let currentRequestIndex = 0;
+        while (currentRequestIndex < folderRequests.length) {
+          item = folderRequests[currentRequestIndex];
+          let nextRequestName = undefined;
           const itemUid = item.uid;
           const eventData = {
             collectionUid,
@@ -685,6 +688,10 @@ const registerNetworkIpc = (mainWindow) => {
                 collectionVariables: result.collectionVariables,
                 collectionUid
               });
+
+              if (result?.nextRequest) {
+                nextRequestName = result.nextRequest;
+              }
             }
 
             // interpolate variables inside request
@@ -807,6 +814,10 @@ const registerNetworkIpc = (mainWindow) => {
                 collectionVariables: result.collectionVariables,
                 collectionUid
               });
+
+              if (result?.nextRequest) {
+                nextRequestName = result.nextRequest;
+              }
             }
 
             // run assertions
@@ -962,6 +973,21 @@ const registerNetworkIpc = (mainWindow) => {
               responseReceived: responseReceived,
               ...eventData
             });
+          }
+          if (nextRequestName) {
+            console.log('have nextRequestName');
+            const nextRequestObj = folderRequests.find((request) => request.name === nextRequestName);
+            console.log(nextRequestObj);
+            if (nextRequestObj) {
+              currentRequestIndex = folderRequests.indexOf(nextRequestObj);
+              console.log('FOUND ONE!' + currentRequestIndex);
+            } else {
+              console.log('doing weird stuff');
+              currentRequestIndex++;
+            }
+          } else {
+            console.log('BOOOORKING');
+            currentRequestIndex++;
           }
         }
 

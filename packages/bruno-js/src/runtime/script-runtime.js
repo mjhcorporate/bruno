@@ -116,7 +116,8 @@ class ScriptRuntime {
     return {
       request,
       envVariables: cleanJson(envVariables),
-      collectionVariables: cleanJson(collectionVariables)
+      collectionVariables: cleanJson(collectionVariables),
+      nextRequest: bru.nextRequest
     };
   }
 
@@ -204,10 +205,12 @@ class ScriptRuntime {
     const asyncVM = vm.run(`module.exports = async () => { ${script} }`, path.join(collectionPath, 'vm.js'));
     await asyncVM();
 
+    console.log('next request: ' + bru.nextRequest);
     return {
       response,
       envVariables: cleanJson(envVariables),
-      collectionVariables: cleanJson(collectionVariables)
+      collectionVariables: cleanJson(collectionVariables),
+      nextRequest: bru.nextRequest
     };
   }
 }
